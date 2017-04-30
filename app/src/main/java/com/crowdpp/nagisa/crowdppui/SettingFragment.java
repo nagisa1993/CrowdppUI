@@ -1,14 +1,17 @@
 package com.crowdpp.nagisa.crowdppui;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.support.v4.app.FragmentManager;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import android.preference.PreferenceFragment;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -20,17 +23,21 @@ import java.util.zip.Inflater;
  * Created by nagisa on 4/4/17.
  */
 
-public class SettingFragment extends PreferenceFragmentCompat {
+public class SettingFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
 //        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingFragment()).commit();
 //    }
+
+    SharedPreferences sharedPreferences;
+
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         // Load the Preferences from the XML file
         addPreferencesFromResource(R.xml.preferences);
+        Log.d("Setting Fragment", "oncreatepreference");
         ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("Setting");
 
@@ -45,28 +52,42 @@ public class SettingFragment extends PreferenceFragmentCompat {
                 fm.popBackStack();
             }
         });
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
-//        @Override
-//        public void onCreate(final Bundle savedInstanceState) {
-//            super.onCreate(savedInstanceState);
-//            addPreferencesFromResource(R.xml.preferences);
-//            ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//            ((MainActivity)getActivity()).getSupportActionBar().setTitle("Setting");
-//
-////            FragmentManager fm = getFragmentManager();
-////            Log.d("click", Integer.toString(fm.getBackStackEntryCount()));
-//
-//            Toolbar toolbar = ((MainActivity) getActivity()).toolbar;
-//            toolbar.setNavigationOnClickListener(new View.OnClickListener(){
-//                @Override
-//                public void onClick(View view) {
-//                    FragmentManager fm = getFragmentManager();
-//                    fm.popBackStack();
-//                }
-//            });
-//
-//        }
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("Setting Fragment", "oncreate");
+        PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //unregister the preferenceChange listener
+        getPreferenceScreen().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //unregister the preference change listener
+        getPreferenceScreen().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("duration")) {
+            ListPreference pref = (ListPreference) findPreference(key);
+            int prefIndex = pref.findIndexOfValue(sharedPreferences.getString(key, ""));
+            String str = pref.getEntries()[prefIndex].toString();
+            Log.d("preferencechangedto", str);
+        }
+    }
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {

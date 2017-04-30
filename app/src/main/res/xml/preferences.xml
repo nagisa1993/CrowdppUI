@@ -7,7 +7,7 @@
         <!--android:summary="Specify when you want the service to run everyday."-->
         <!--android:key="period" />-->
     <com.crowdpp.nagisa.crowdppui.TimePreference
-        android:key="key4"
+        android:key="period"
         android:title="Period"
         android:summary="Specify when you want the service to run everyday."
         android:defaultValue="9,21" />
