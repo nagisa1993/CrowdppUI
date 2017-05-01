@@ -16,6 +16,7 @@ import android.widget.Toast;
  */
 
 public class MainFragment extends Fragment implements View.OnClickListener {
+    Button mSettingBtn, mHelpBtn, mLogBtn, maaa;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -24,14 +25,17 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((MainActivity)getActivity()).getSupportActionBar().setTitle("Activity Logger");
 
-        Button mSettingBtn = (Button) rootView.findViewById(R.id.setting_btn);
+        mSettingBtn = (Button) rootView.findViewById(R.id.setting_btn);
         mSettingBtn.setOnClickListener(this);
 
-        Button mHelpBtn = (Button) rootView.findViewById(R.id.help_btn);
+        mHelpBtn = (Button) rootView.findViewById(R.id.help_btn);
         mHelpBtn.setOnClickListener(this);
 
-        Button maaa = (Button) rootView.findViewById(R.id.aaa);
+        maaa = (Button) rootView.findViewById(R.id.aaa);
         maaa.setOnClickListener(this);
+
+        mLogBtn = (Button) rootView.findViewById(R.id.log_btn);
+        mLogBtn.setOnClickListener(this);
         return rootView;
     }
 
@@ -55,6 +59,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 getFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragment_container, helpFragment)
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            }
+
+            case R.id.log_btn: {
+                LogFragment logFragment = new LogFragment();
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, logFragment)
                         .addToBackStack(null)
                         .commit();
                 break;
