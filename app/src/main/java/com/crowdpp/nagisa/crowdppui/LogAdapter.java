@@ -8,64 +8,85 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nagisa on 5/1/17.
  */
 
 public class LogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final static int TYPE_SMS = 1, TYPE_CALL = 2;
     private Context mContext;
-    ArrayList<Sms> smsList;
-    ArrayList<Call> callList;
+    List<Object> smsCallList = new ArrayList<>();
 
-    public LogAdapter(Context mContext, ArrayList<Sms> smsList, ArrayList<Call> callList) {
+    public LogAdapter(Context mContext) {
         this.mContext = mContext;
-        this.smsList = smsList;
-        this.callList = callList;
     }
+
+    public void setCallSMSFeed(List<Object> smsCallList){
+        this.smsCallList = smsCallList;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        int layout = 0;
+        RecyclerView.ViewHolder viewHolder;
         switch (viewType) {
-            case 0: return new smsViewHolder(LayoutInflater.from(mContext).inflate(R.layout.log_sms, null));
-            case 2: return new callViewHolder(LayoutInflater.from(mContext).inflate(R.layout.log_call, null));
+            case TYPE_SMS: {
+                layout = R.layout.log_sms;
+                View smsView = LayoutInflater
+                        .from(mContext)
+                        .inflate(layout, null);
+                viewHolder = new smsViewHolder(smsView);
+                break;
+            }
+            case TYPE_CALL: {
+                layout = R.layout.log_call;
+                View callView = LayoutInflater
+                        .from(mContext)
+                        .inflate(layout, null);
+                viewHolder = new callViewHolder(callView);
+                break;
+            }
+            default:
+                viewHolder = null;
+                break;
         }
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int i) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (holder.getItemViewType()) {
-            case 0:
-                smsViewHolder sms = (smsViewHolder) holder;
-                ((smsViewHolder) holder).smsName.setText(smsList.get(i).userName);
-                ((smsViewHolder) holder).smsBody.setText(smsList.get(i).userMobile);
-                ((smsViewHolder) holder).smsDate.setText(smsList.get(i).userEmail);
+            case TYPE_SMS:
+                Sms sms = (Sms) smsCallList.get(position);
+                ((smsViewHolder) holder).showSmsDetail(sms);
                 break;
 
-            case 2:
-                callViewHolder call = (callViewHolder) holder;
-                ((callViewHolder) holder).callName.setText(callList.get(i).userName);
-                ((callViewHolder) holder).callDuration.setText(callList.get(i).userMobile);
-                ((callViewHolder) holder).callDate.setText(callList.get(i).userEmail);
+            case TYPE_CALL:
+                Call call = (Call) smsCallList.get(position);
+                ((callViewHolder) holder).showCallDetail(call);
                 break;
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        // Just as an example, return 0 or 2 depending on position
-        // Note that unlike in ListView adapters, types don't have to be contiguous
-        return position % 2 * 2;
+        if (smsCallList.get(position) instanceof Call) {
+            return TYPE_CALL;
+        } else if (smsCallList.get(position) instanceof Sms) {
+            return TYPE_SMS;
+        }
+        return -1;
     }
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        return smsCallList.size();
     }
 
-    public static class smsViewHolder extends RecyclerView.ViewHolder {
-        private TextView smsName;
-        private TextView smsBody;
-        private TextView smsDate;
+    public class smsViewHolder extends RecyclerView.ViewHolder {
+        private TextView smsName, smsBody, smsDate;
 
         public smsViewHolder(View itemView) {
             super(itemView);
@@ -73,18 +94,28 @@ public class LogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             smsBody = (TextView) itemView.findViewById(R.id.smsBody);
             smsDate = (TextView) itemView.findViewById(R.id.smsDate);
         }
+
+        public void showSmsDetail(Sms sms) {
+            smsName.setText(sms.getName());
+            smsBody.setText(sms.getBody());
+            smsDate.setText(sms.getDate());
+        }
     }
 
-    public static class callViewHolder extends RecyclerView.ViewHolder {
-        private TextView callName;
-        private TextView callDuration;
-        private TextView callDate;
+    public class callViewHolder extends RecyclerView.ViewHolder {
+        private TextView callName, callDuration, callDate;
 
         public callViewHolder(View itemView) {
             super(itemView);
             callName = (TextView) itemView.findViewById(R.id.callName);
             callDuration = (TextView) itemView.findViewById(R.id.callDuration);
             callDate = (TextView) itemView.findViewById(R.id.callDate);
+        }
+
+        public void showCallDetail(Call call) {
+            callName.setText(call.getName());
+            callDate.setText(call.getDate());
+            callDuration.setText(call.getDuration());
         }
     }
 }
