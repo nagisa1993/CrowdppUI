@@ -9,16 +9,16 @@ Here are some of screenshots for this app.
 Main interface:
 ````
 
-![alt tag](app/src/main/res/drawable/Screenshot_1492103033.png)
+![alt tag](app/src/main/res/drawable/screenshot_1492103033.png)
 
 ``` 
 Setting interface:
 ````
 
-![alt tag](app/src/main/res/drawable/Screenshot_1492097607.png)
+![alt tag](app/src/main/res/drawable/screenshot_1492097607.png)
 
 ``` 
 Contact interface:
 ````
 
-![alt tag](app/src/main/res/drawable/Screenshot_1492097602.png)
+![alt tag](app/src/main/res/drawable/screenshot_1492097602.png)
